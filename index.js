@@ -4,14 +4,9 @@ require('dotenv').config();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
-
-//middleware
 app.use(cors());
 app.use(express.json());
-
-const uri = `mongodb+srv://${process.env.BD_USER}:${process.env.BD_PASS}@cluster0.8ibeotr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const uri = `mongodb+srv://${process.env.DB_TOUR}:${process.env.BD_PASSE}@cluster0.8ibeotr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -19,33 +14,27 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
-
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    const touristsSpotesCollection = client.db('touristsSpotesDB').collection('touristsSpotesCollection');
-    app.post('/touristsSpotes', async(req, res) => {
-        const touristsSpotes = req.body;
-        console.log(touristsSpotes);
-        const result = await touristsSpotesCollection.insertOne(touristsSpotes);
+    const data = client.db("tourDB");
+    const tourCollection = data.collection("tourCollection")
+    app.post('/touristsSpots', async(req, res) => {
+        const touristsSpots = req.body;
+        console.log(touristsSpots);
+        const result = await tourCollection.insertOne(touristsSpots);
+        console.log('Inserted document:', result);
         res.send(result);
     })
-    // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
-    // Ensures that the client will close when you finish/error
     // await client.close();
   }
 }
 run().catch(console.dir);
-
-
 app.get('/', (req, res) => {
     res.send('make server')
 })
-
 app.listen(port, ()=>{
     console.log('server is running')
 })
