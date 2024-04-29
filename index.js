@@ -14,10 +14,18 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
+
 async function run() {
   try {
     const data = client.db("tourDB");
     const tourCollection = data.collection("tourCollection")
+
+    app.get('/touristsSpots', async(req, res) => {
+      const cursor = tourCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
     app.post('/touristsSpots', async(req, res) => {
         const touristsSpots = req.body;
         console.log(touristsSpots);
