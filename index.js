@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 app.use(cors());
@@ -26,6 +26,26 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/touristsSpots/:_id', async (req, res) => {
+      const { _id } = req.params;
+      try {
+        const result = await tourCollection.findOne({ _id: new ObjectId(_id) });
+        if (!result) {
+          return res.status(404).json({ message: 'Tourist spot not found' });
+        }
+        res.json(result);
+      } catch (error) {
+        console.error('Error fetching tourist spot details:', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+    });
+    
+    app.delete('/touristsSpots/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await tourCollection.deleteOne(query);
+      res.send(result)
+    })
     app.post('/touristsSpots', async(req, res) => {
         const touristsSpots = req.body;
         console.log(touristsSpots);
