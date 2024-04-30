@@ -46,7 +46,27 @@ async function run() {
         res.status(500).json({ message: 'Internal server error' });
       }
     });
-    
+    app.put('/touristsSpots/:id', async (req, res) => {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)}
+        const options = {upsert:true}
+        const update = req.body;
+        const tour = {
+          $set:{
+            image:update.image,
+             touristsName:update.touristsName,
+             countryName:update.countryName,
+             locationName:update.locationName,
+             description:update.description,
+             costName:update.costName,
+             seasonName:update.seasonName,
+             time:update.time,
+             VisitorsName:update.VisitorsName
+          }
+        }
+        const result = await tourCollection.update(filter, tour, options);
+        res.send(result)
+    })
     app.delete('/touristsSpots/:id', async (req, res) => {
       const id = req.params.id;
       const query = {_id: new ObjectId(id)}
