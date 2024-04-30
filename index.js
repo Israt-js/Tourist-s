@@ -63,6 +63,7 @@ async function run() {
              time:update.time,
              VisitorsName:update.VisitorsName
           }
+          
         }
         const result = await tourCollection.update(filter, tour, options);
         res.send(result)
